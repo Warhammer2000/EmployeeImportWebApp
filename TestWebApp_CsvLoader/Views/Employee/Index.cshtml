@@ -1,0 +1,176 @@
+﻿@model IEnumerable<EmployeeImportApp.Models.Employee>
+
+@{
+    ViewData["Title"] = "Импорт сотрудников";
+}
+
+<h2 class="text-center mt-4">Импорт сотрудников</h2>
+
+@if (TempData["ImportResult"] != null)
+{
+    <div class="alert alert-info mt-3">
+        @TempData["ImportResult"]
+    </div>
+}
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card my-4 shadow-lg p-4">
+    <h5 class="card-title text-center">Загрузите CSV файл для импорта</h5>
+    @using (Html.BeginForm("Import", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="form-group mb-3">
+            <label for="file" class="form-label">Выберите файл CSV:</label>
+            <input type="file" name="file" id="file" class="form-control form-control-lg" />
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Импортировать</button>
+        </div>
+    }
+</div>
+
+<hr class="my-5" />
+
+<h3 class="text-center mb-4">Список сотрудников</h3>
+
+<div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle text-center display">
+        <thead class="table-dark">
+            <tr>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Мобильный</th>
+                <th>Адрес</th>
+                <th>Почтовый индекс</th>
+                <th>Дата рождения</th>
+                <th>Дата начала</th>
+                <th class="text-danger">Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var employee in Model)
+                {
+                    <tr>
+                        @if (employee.IsEditing)
+                        {
+                            @using (Html.BeginForm("Update", "Employee", FormMethod.Post))
+                            {
+                                <td><input type="text" class="form-control" name="LastName" value="@employee.LastName" /></td>
+                                <td><input type="text" class="form-control" name="FirstName" value="@employee.FirstName" /></td>
+                                <td><input type="text" class="form-control" name="Email" value="@employee.Email" /></td>
+                                <td><input type="text" class="form-control" name="PhoneNumber" value="@employee.PhoneNumber" /></td>
+                                <td><input type="text" class="form-control" name="Mobile" value="@employee.Mobile" /></td>
+                                <td><input type="text" class="form-control" name="Address" value="@employee.Address" /></td>
+                                <td><input type="text" class="form-control" name="Postcode" value="@employee.Postcode" /></td>
+                                <td><input type="text" class="form-control" name="DateOfBirth" value="@employee.DateOfBirth" /></td>
+                                <td><input type="text" class="form-control" name="StartDate" value="@employee.StartDate" /></td>
+                                <td class="action-buttons">
+                                    <input type="hidden" name="id" value="@employee.EmployeeId" />
+                                    <button type="submit" class="btn btn-success">Сохранить</button>
+                                </td>
+                            }
+                            <td class="action-buttons">
+                                @using (Html.BeginForm("Delete", "Employee", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="id" value="@employee.EmployeeId" />
+                                    <button type="submit" class="btn btn-danger ms-2">Удалить</button>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            @using (Html.BeginForm("Edit", "Employee", FormMethod.Post))
+                            {
+                                <td>@employee.LastName</td>
+                                <td>@employee.FirstName</td>
+                                <td>@employee.Email</td>
+                                <td>@employee.PhoneNumber</td>
+                                <td>@employee.Mobile</td>
+                                <td>@employee.Address</td>
+                                <td>@employee.Postcode</td>
+                                <td>@employee.DateOfBirth</td>
+                                <td>@employee.StartDate</td>
+                                <td class="action-buttons">
+                                    <input type="hidden" name="id" value="@employee.EmployeeId" />
+                                    <button type="submit" class="btn btn-warning">Редактировать</button>
+                                </td>
+                            }
+                            <td class="action-buttons">
+                                @using (Html.BeginForm("Delete", "Employee", FormMethod.Post))
+                                {
+                                    <input type="hidden" name="id" value="@employee.EmployeeId" />
+                                    <button type="submit" class="btn btn-danger ms-2">Удалить</button>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="10" class="text-center">Данные отсутствуют</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                @using (Html.BeginForm("Create", "Employee", FormMethod.Post))
+                {
+                    <td><input type="text" class="form-control" name="LastName" /></td>
+                    <td><input type="text" class="form-control" name="FirstName" /></td>
+                    <td><input type="text" class="form-control" name="Email" /></td>
+                    <td><input type="text" class="form-control" name="PhoneNumber" /></td>
+                    <td><input type="text" class="form-control" name="Mobile" /></td>
+                    <td><input type="text" class="form-control" name="Address" /></td>
+                    <td><input type="text" class="form-control" name="Postcode" /></td>
+                    <td><input type="text" class="form-control" name="DateOfBirth" /></td>
+                    <td><input type="text" class="form-control" name="StartDate" /></td>
+                    <td>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </td>
+                }
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<style>
+    th.text-danger {
+        font-weight: bold;
+        color: #dc3545;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 5px; 
+    }
+
+        .action-buttons .btn {
+            flex-grow: 1; 
+            min-width: 100px; 
+        }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.4/css/dataTables.dataTables.min.css">
+<script src="https://cdn.datatables.net/2.1.4/js/dataTables.min.js"></script>

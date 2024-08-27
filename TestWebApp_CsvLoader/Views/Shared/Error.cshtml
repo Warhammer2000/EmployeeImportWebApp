@@ -1,0 +1,12 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Ошибка";
+}
+
+<div class="d-flex flex-column justify-content-center align-items-center vh-100">
+    <div class="text-center">
+        <h1 class="display-1 fw-bold text-danger">Ошибка @Model</h1>
+        <p class="lead">Произошла ошибка. Код ошибки: <strong>@Model</strong></p>
+        <a href="/" class="btn btn-primary btn-lg mt-4">Вернуться на главную</a>
+    </div>
+</div>
